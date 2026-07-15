@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bill Receipt</title>
+    <style>
+        body {
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .receipt-box {
+            background-color: #ffffff;
+            border: 2px solid #333333;
+            padding: 30px;
+            width: 350px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            text-align: center;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        // 1. Popups to take user input
+        var uName = prompt("Enter User Name:");
+        var contact = prompt("Enter Contact No:");
+        var pName = prompt("Enter Product Name:");
+        var qty = Number(prompt("Enter Quantity:"));
+        var price = Number(prompt("Enter Price per Unit:"));
+
+        // 2. Mathematical calculations
+        var total = qty * price;
+        var gst = total * 0.18;
+        var finalAmount = total + gst;
+
+        // 3. Outputting only the centered bill box
+        document.write("<div class='receipt-box'>");
+        document.write("<h3>Bill Receipt</h3>");
+        document.write("<p><b>User Name:</b> " + uName + "</p>");
+        document.write("<p><b>Contact No:</b> " + contact + "</p>");
+        document.write("<p><b>Product Name:</b> " + pName + "</p>");
+        document.write("<p><b>Quantity:</b> " + qty + "</p>");
+        document.write("<p><b>Price:</b> " + price + "</p>");
+        document.write("<hr>");
+        document.write("<p><b>Total Value:</b> " + total + "</p>");
+        document.write("<p><b>GST (18%):</b> " + gst + "</p>");
+        document.write("<p style='font-size: 18px;'><b>Final Amount:</b> " + finalAmount + "</p>");
+        document.write("<br>");
+        document.write("<p style='font-size: 12px; color: #555; text-align: center;'>Name: Aaryan Kawale, PRN: 24070521162</p>");
+        document.write("</div>");
+    </script>
+
+</body>
+</html>
