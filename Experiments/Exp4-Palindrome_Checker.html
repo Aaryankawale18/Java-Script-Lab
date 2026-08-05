@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palindrome Checker</title>
+  <style>
+    :root {
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --success-bg: #d1fae5;
+      --success-text: #065f46;
+      --error-bg: #fee2e2;
+      --error-text: #991b1b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: var(--card-bg);
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      max-width: 480px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      color: var(--text-main);
+      text-align: center;
+    }
+
+    p.subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: var(--primary);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-align: center;
+      display: none;
+      word-break: break-word;
+    }
+
+    #result.success {
+      display: block;
+      background-color: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    #result.error {
+      display: block;
+      background-color: var(--error-bg);
+      color: var(--error-text);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Palindrome Checker</h1>
+    <p class="subtitle">Enter a word, number, or phrase to test</p>
+
+    <div class="input-group">
+      <input type="text" id="userInput" placeholder="e.g., racecar, 12321, or A man, a plan..." />
+      <button onclick="checkPalindrome()">Check</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function checkPalindrome() {
+      const inputElement = document.getElementById("userInput");
+      const resultElement = document.getElementById("result");
+      const rawText = inputElement.value;
+
+      if (!rawText.trim()) {
+        resultElement.className = "error";
+        resultElement.textContent = "Please enter something to check!";
+        return;
+      }
+
+      // Clean the string: remove non-alphanumeric characters and convert to lowercase
+      const cleaned = rawText.toLowerCase().replace(/[^a-z0-9]/g, "");
+      
+      // Reverse the cleaned string
+      const reversed = cleaned.split("").reverse().join("");
+
+      // Compare cleaned string with its reversed counterpart
+      if (cleaned === reversed) {
+        resultElement.className = "success";
+        resultElement.innerHTML = `<strong>"${rawText}"</strong> is a palindrome!`;
+      } else {
+        resultElement.className = "error";
+        resultElement.innerHTML = `<strong>"${rawText}"</strong> is NOT a palindrome.`;
+      }
+    }
+
+    // Allow pressing "Enter" key to trigger the check
+    document.getElementById("userInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        checkPalindrome();
+      }
+    });
+  </script>
+
+</body>
+</html>
