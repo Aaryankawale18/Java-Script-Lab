@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MetaHat Store</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+
+    body {
+      background-color: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 20px 0;
+      color: #1a1a1a;
+    }
+
+    /* Main Container: Split Left and Right Centered */
+    .page-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      width: 90%;
+      max-width: 1000px;
+      margin: auto 0;
+    }
+
+    /* Left Box - Products Container */
+    .box-left {
+      flex: 1;
+      background: #ffffff;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    /* Right Box - Shopping Cart Container */
+    .box-right {
+      width: 320px;
+      background: #ffffff;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .box-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #f0f2f5;
+      padding-bottom: 8px;
+    }
+
+    /* Items Grid Inside Left Box */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .product-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      background: #fafafa;
+    }
+
+    .product-card h4 { font-size: 0.95rem; margin-bottom: 5px; }
+    .product-card .price { color: #2563eb; font-weight: bold; margin-bottom: 10px; }
+
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    button:hover { background-color: #1d4ed8; }
+
+    /* Cart Items List */
+    .cart-items {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed #e2e8f0;
+      font-size: 0.9rem;
+    }
+
+    .btn-remove {
+      background: #ef4444;
+      padding: 2px 6px;
+      font-size: 0.75rem;
+    }
+    .btn-remove:hover { background: #dc2626; }
+
+    /* Price Calculation Block */
+    .price-details {
+      border-top: 2px solid #e2e8f0;
+      padding-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .discount-text { color: #16a34a; font-weight: 600; }
+
+    .final-row {
+      font-size: 1.15rem;
+      font-weight: bold;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Insta Mart</h1>
+
+  <div class="page-wrapper">
+    
+    <!-- LEFT BOX: Item Listing -->
+    <div class="box-left">
+      <div class="box-title">Available Items</div>
+      <div id="product-list" class="product-grid"></div>
+    </div>
+
+    <!-- RIGHT BOX: Cart & Price Calculations -->
+    <div class="box-right">
+      <div class="box-title">Your Cart</div>
+      
+      <div id="cart-items" class="cart-items"></div>
+
+      <div class="price-details">
+        <div class="price-row">
+          <span>Cart Price:</span>
+          <span>₹<span id="cart-price">0</span></span>
+        </div>
+        <div class="price-row discount-text">
+          <span>Discount (<span id="discount-percent">0</span>%):</span>
+          <span>-₹<span id="discount-price">0</span></span>
+        </div>
+        <div class="price-row final-row">
+          <span>Final Price:</span>
+          <span>₹<span id="final-price">0</span></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ============================================================
+    // 💥 HIGHLIGHT: ITEM LIST ARRAY (EDIT/ADD YOUR ITEMS HERE) 💥
+    // ============================================================
+    const products = [
+      { id: 1, name: "MetaCap", price: 400 },
+      { id: 2, name: "Cyber Hat", price: 800 },
+      { id: 4, name: "Meta Glasses", price: 3200 },
+      { id: 6, name: "Watch", price: 2000 },
+      { id: 7, name: "Stylus", price: 500 },
+      { id: 8, name: "Pen drive", price: 200 },
+      { id: 9, name: "VR Visor", price: 1200 },
+      { id: 10, name: "Smart Crown", price: 2500 }
+    ];
+    // ============================================================
+
+    let cart = [];
+
+    // Render items inside Left Box
+    function renderProducts() {
+      document.getElementById('product-list').innerHTML = products.map(p => `
+        <div class="product-card">
+          <h4>${p.name}</h4>
+          <div class="price">₹${p.price}</div>
+          <button onclick="addToCart(${p.id})">Add to Cart</button>
+        </div>
+      `).join('');
+    }
+
+    // Add item to cart
+    function addToCart(id) {
+      const item = products.find(p => p.id === id);
+      cart.push(item);
+      updateCart();
+    }
+
+    // Remove item from cart
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    // Calculate prices and update Right Box UI
+    function updateCart() {
+      const cartContainer = document.getElementById('cart-items');
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = '<p style="color: #94a3b8; text-align: center;">Cart is empty</p>';
+      } else {
+        cartContainer.innerHTML = cart.map((item, index) => `
+          <div class="cart-item">
+            <span>${item.name} (₹${item.price})</span>
+            <button class="btn-remove" onclick="removeFromCart(${index})">Remove</button>
+          </div>
+        `).join('');
+      }
+
+      // 1. Calculate Cart Subtotal
+      const cartPrice = cart.reduce((sum, item) => sum + item.price, 0);
+
+      // 2. Discount Tier Rules
+      let discountPercent = 0;
+      if (cartPrice > 3000) discountPercent = 30;
+      else if (cartPrice > 2000) discountPercent = 20;
+      else if (cartPrice > 1000) discountPercent = 10;
+
+      // 3. Discount Calculations
+      const discountPrice = (cartPrice * discountPercent) / 100;
+      const finalPrice = cartPrice - discountPrice;
+
+      // Render Values
+      document.getElementById('cart-price').textContent = cartPrice;
+      document.getElementById('discount-percent').textContent = discountPercent;
+      document.getElementById('discount-price').textContent = discountPrice;
+      document.getElementById('final-price').textContent = finalPrice;
+    }
+
+    // Initialize Page
+    renderProducts();
+    updateCart();
+  </script>
+
+</body>
+</html>
