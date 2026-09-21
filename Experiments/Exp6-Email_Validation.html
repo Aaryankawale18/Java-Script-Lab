@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Inspector & Email Parser</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #eef2f3, #8e9eab);
+            margin: 0;
+            padding: 40px 20px;
+            color: #2d3748;
+        }
+        .wrapper {
+            max-width: 650px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 8px;
+            color: #1a202c;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 130px;
+            padding: 12px;
+            border: 1.5px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        textarea:focus {
+            border-color: #4f46e5;
+        }
+        .btn-submit {
+            background-color: #4f46e5;
+            color: #ffffff;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            margin-top: 12px;
+            transition: background 0.2s ease;
+        }
+        .btn-submit:hover {
+            background-color: #4338ca;
+        }
+        .metrics-card {
+            margin-top: 25px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            padding: 18px;
+        }
+        .metrics-card h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 14px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .stat-column {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 6px 0;
+            font-size: 14px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .stat-column:last-child {
+            border-bottom: none;
+        }
+        .value {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .text-preview {
+            word-break: break-all;
+            background: #edf2f7;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #2d3748;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+        .email-box {
+            word-break: break-all;
+            color: #4f46e5;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h1>Text Insights & Email Extractor</h1>
+    <p class="subtitle">Enter any text to evaluate metrics and extract contact emails.</p>
+    
+    <textarea id="rawContent" placeholder="Paste your text here..."></textarea>
+    <button class="btn-submit" id="processBtn">Process Input</button>
+
+    <div class="metrics-card" id="statsBox" style="display: none;">
+        <h3>Detailed Breakdown</h3>
+        <div class="stat-row">
+            <span>Total Characters:</span>
+            <span id="statChars" class="value">0</span>
+        </div>
+        <div class="stat-row">
+            <span>Capital Letters:</span>
+            <span id="statUpper" class="value">0</span>
+        </div>
+        <div class="stat-row">
+            <span>Small Letters:</span>
+            <span id="statLower" class="value">0</span>
+        </div>
+        <div class="stat-row">
+            <span>Greeting "Welcome" Included:</span>
+            <span id="statKeyword" class="value">No</span>
+        </div>
+        <div class="stat-column">
+            <span>Uppercase Converted Text:</span>
+            <div id="textUppercase" class="text-preview">N/A</div>
+        </div>
+        <div class="stat-column">
+            <span>Lowercase Converted Text:</span>
+            <div id="textLowercase" class="text-preview">N/A</div>
+        </div>
+        <div class="stat-column">
+            <span>Discovered Email Addresses:</span>
+            <span id="statEmails" class="email-box">N/A</span>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('processBtn').addEventListener('click', function() {
+    const inputData = document.getElementById('rawContent').value;
+    
+    // Character and letter parsing
+    const totalChars = inputData.length;
+    let uppercaseMatches = 0;
+    let lowercaseMatches = 0;
+
+    for (let char of inputData) {
+        if (char >= 'A' && char <= 'Z') uppercaseMatches++;
+        else if (char >= 'a' && char <= 'z') lowercaseMatches++;
+    }
+
+    // Keyword validation
+    const hasWelcomeWord = inputData.toLowerCase().includes('welcome');
+
+    // Case conversions
+    const convertedUpper = inputData.toUpperCase();
+    const convertedLower = inputData.toLowerCase();
+
+    // Email extraction using pattern matching
+    const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/gi;
+    const matchedEmails = inputData.match(emailPattern) || [];
+    const sanitizedEmailList = Array.from(new Set(matchedEmails));
+
+    // Update DOM
+    document.getElementById('statChars').textContent = totalChars;
+    document.getElementById('statUpper').textContent = uppercaseMatches;
+    document.getElementById('statLower').textContent = lowercaseMatches;
+    document.getElementById('statKeyword').textContent = hasWelcomeWord ? "Detected" : "Not Detected";
+    document.getElementById('textUppercase').textContent = inputData.trim() ? convertedUpper : "N/A";
+    document.getElementById('textLowercase').textContent = inputData.trim() ? convertedLower : "N/A";
+    document.getElementById('statEmails').textContent = sanitizedEmailList.length > 0 ? sanitizedEmailList.join(', ') : "No emails found";
+
+    document.getElementById('statsBox').style.display = 'block';
+});
+</script>
+
+</body>
+</html>
