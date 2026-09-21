@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gym Membership Registration</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .form-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 32px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .form-card h2 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #222;
+    }
+
+    .form-card p.subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #ff5722;
+    }
+
+    input.input-error, select.input-error {
+      border-color: #e53935;
+    }
+
+    .error-msg {
+      display: block;
+      color: #e53935;
+      font-size: 12px;
+      margin-top: 4px;
+      min-height: 16px;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .row .form-group {
+      flex: 1;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background-color: #ff5722;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 8px;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #e64a19;
+    }
+
+    .confirmation-box {
+      display: none;
+      margin-top: 20px;
+      padding: 14px;
+      background-color: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      color: #2e7d32;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-card">
+    <h2>FitZone Gym</h2>
+    <p class="subtitle">Member Registration Form</p>
+
+    <form id="gymForm" novalidate>
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" placeholder="Enter your full name" />
+        <span class="error-msg" id="nameError"></span>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" placeholder="Age (15+)" />
+          <span class="error-msg" id="ageError"></span>
+        </div>
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <span class="error-msg" id="genderError"></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="example@domain.com" />
+        <span class="error-msg" id="emailError"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" placeholder="10-digit mobile number" />
+        <span class="error-msg" id="phoneError"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="membership">Membership Type</label>
+        <select id="membership">
+          <option value="">Select a Plan</option>
+          <option value="Standard Monthly">Standard Monthly (4000/mo)</option>
+          <option value="Quarterly Pass">Quarterly Pass (8500/3 mos)</option>
+          <option value="Annual Premium">Annual Premium (24999/yr)</option>
+          <option value="VIP Personal Training">VIP All-Access + Trainer (30500/yr)</option>
+        </select>
+        <span class="error-msg" id="membershipError"></span>
+      </div>
+
+      <button type="submit" id="submitBtn">Register Now</button>
+    </form>
+
+    <div class="confirmation-box" id="confirmationBox">
+      Registration submitted successfully! Welcome to the gym.
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('gymForm');
+    const confirmationBox = document.getElementById('confirmationBox');
+
+    function showError(inputId, errorId, message) {
+      const input = document.getElementById(inputId);
+      const error = document.getElementById(errorId);
+      input.classList.add('input-error');
+      error.textContent = message;
+    }
+
+    function clearError(inputId, errorId) {
+      const input = document.getElementById(inputId);
+      const error = document.getElementById(errorId);
+      input.classList.remove('input-error');
+      error.textContent = '';
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      confirmationBox.style.display = 'none';
+
+      let isValid = true;
+
+      const name = document.getElementById('fullName').value.trim();
+      const age = parseInt(document.getElementById('age').value, 10);
+      const gender = document.getElementById('gender').value;
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const membership = document.getElementById('membership').value;
+
+      // Name validation
+      if (!name) {
+        showError('fullName', 'nameError', 'Please enter your full name.');
+        isValid = false;
+      } else {
+        clearError('fullName', 'nameError');
+      }
+
+      // Age validation (15+)
+      if (isNaN(age)) {
+        showError('age', 'ageError', 'Please enter your age.');
+        isValid = false;
+      } else if (age < 15) {
+        showError('age', 'ageError', 'Age must be 15 or older to register.');
+        isValid = false;
+      } else {
+        clearError('age', 'ageError');
+      }
+
+      // Gender validation
+      if (!gender) {
+        showError('gender', 'genderError', 'Please select a gender.');
+        isValid = false;
+      } else {
+        clearError('gender', 'genderError');
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        showError('email', 'emailError', 'Please enter your email address.');
+        isValid = false;
+      } else if (!emailRegex.test(email)) {
+        showError('email', 'emailError', 'Invalid email address format.');
+        isValid = false;
+      } else {
+        clearError('email', 'emailError');
+      }
+
+      // Phone validation (10 digits)
+      const phoneDigits = phone.replace(/\D/g, '');
+      if (!phone) {
+        showError('phone', 'phoneError', 'Please enter your phone number.');
+        isValid = false;
+      } else if (phoneDigits.length !== 10) {
+        showError('phone', 'phoneError', 'Please enter a valid 10-digit phone number.');
+        isValid = false;
+      } else {
+        clearError('phone', 'phoneError');
+      }
+
+      // Membership validation
+      if (!membership) {
+        showError('membership', 'membershipError', 'Please select a membership plan.');
+        isValid = false;
+      } else {
+        clearError('membership', 'membershipError');
+      }
+
+      // Final check
+      if (isValid) {
+        confirmationBox.style.display = 'block';
+        form.reset();
+      }
+    });
+  </script>
+</body>
+</html>
