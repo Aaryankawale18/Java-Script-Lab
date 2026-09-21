@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Registration Form</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #eef2f7;
+            padding: 30px 15px;
+            margin: 0;
+        }
+
+        .form-card {
+            max-width: 580px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        /* 2-Column Grid to align labels side-by-side with inputs */
+        .form-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            align-items: center;
+            margin-bottom: 14px;
+            gap: 10px;
+        }
+
+        label.field-title {
+            font-weight: 600;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Inputs and Selects styling */
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Radio & Checkbox containers */
+        .inline-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .inline-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 11px;
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Submission message display */
+        #successMessage {
+            display: none;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <h2>Student Registration</h2>
+
+    <form onsubmit="return validateForm(event)">
+        
+        <!-- Name -->
+        <div class="form-row">
+            <label class="field-title" for="name">Name:</label>
+            <div class="input-wrapper">
+                <input type="text" id="name" placeholder="Full name" onfocus="highlight(this)" onblur="unhighlight(this)">
+                <span id="nameError" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-row">
+            <label class="field-title" for="email">Email:</label>
+            <div class="input-wrapper">
+                <input type="email" id="email" placeholder="example@email.com" onfocus="highlight(this)" onblur="unhighlight(this)">
+                <span id="emailError" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Date of Birth -->
+        <div class="form-row">
+            <label class="field-title" for="dob">Date of Birth:</label>
+            <div class="input-wrapper">
+                <input type="date" id="dob" onfocus="highlight(this)" onblur="unhighlight(this)">
+                <span id="dobError" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="form-row">
+            <label class="field-title">Gender:</label>
+            <div class="input-wrapper">
+                <div class="inline-group">
+                    <label><input type="radio" name="gender" value="Male" onchange="clearError('genderError')"> Male</label>
+                    <label><input type="radio" name="gender" value="Female" onchange="clearError('genderError')"> Female</label>
+                    <label><input type="radio" name="gender" value="Other" onchange="clearError('genderError')"> Other</label>
+                </div>
+                <span id="genderError" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Year -->
+        <div class="form-row">
+            <label class="field-title" for="year">Year:</label>
+            <div class="input-wrapper">
+                <select id="year" onfocus="highlight(this)" onblur="unhighlight(this)" onchange="clearError('yearError')">
+                    <option value="">-- Select Year --</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                </select>
+                <span id="yearError" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Semester -->
+        <div class="form-row">
+            <label class="field-title" for="sem">Semester:</label>
+            <div class="input-wrapper">
+                <select id="sem" onfocus="highlight(this)" onblur="unhighlight(this)" onchange="clearError('semError')">
+                    <option value="">-- Select Semester --</option>
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                    <option value="3">Semester 3</option>
+                    <option value="4">Semester 4</option>
+                    <option value="5">Semester 5</option>
+                    <option value="6">Semester 6</option>
+                    <option value="7">Semester 7</option>
+                    <option value="8">Semester 8</option>
+                </select>
+                <span id="semError" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Section -->
+        <div class="form-row">
+            <label class="field-title" for="sec">Section:</label>
+            <div class="input-wrapper">
+                <input type="text" id="sec" placeholder="e.g., A, B, C" onfocus="highlight(this)" onblur="unhighlight(this)">
+                <span id="secError" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Batch -->
+        <div class="form-row">
+            <label class="field-title" for="batch">Batch:</label>
+            <div class="input-wrapper">
+                <input type="text" id="batch" placeholder="e.g., 2023-2027" onfocus="highlight(this)" onblur="unhighlight(this)">
+                <span id="batchError" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="form-row">
+            <div></div>
+            <div class="input-wrapper">
+                <div class="inline-group">
+                    <label>
+                        <input type="checkbox" id="terms" onchange="clearError('termsError')">
+                        I agree to all terms and conditions
+                    </label>
+                </div>
+                <span id="termsError" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <input type="submit" class="submit-btn" value="Submit Form">
+    </form>
+
+    <div id="successMessage">Form submitted successfully!</div>
+</div>
+
+<script>
+    // Focus Event: Light blue highlight with subtle border
+    function highlight(x) {
+        x.style.backgroundColor = "#f0f7ff";
+        x.style.borderColor = "#3498db";
+        x.style.outline = "none";
+    }
+
+    // Blur Event: Revert styling
+    function unhighlight(x) {
+        x.style.backgroundColor = "#ffffff";
+        x.style.borderColor = "#cbd5e1";
+    }
+
+    // Change Event Helper: Clears specific error message
+    function clearError(errorId) {
+        document.getElementById(errorId).innerText = "";
+    }
+
+    // Submit Event & Validations
+    function validateForm(event) {
+        event.preventDefault(); // Stop default form submit
+
+        // Clear all previous error messages
+        var errors = document.querySelectorAll(".error");
+        errors.forEach(function(el) { el.innerText = ""; });
+        document.getElementById("successMessage").style.display = "none";
+
+        // Read values
+        var name = document.getElementById("name").value.trim();
+        var email = document.getElementById("email").value.trim();
+        var dob = document.getElementById("dob").value;
+        var year = document.getElementById("year").value;
+        var sem = document.getElementById("sem").value;
+        var sec = document.getElementById("sec").value.trim();
+        var batch = document.getElementById("batch").value.trim();
+        var terms = document.getElementById("terms").checked;
+
+        // Check gender radio button
+        var gender = "";
+        var radios = document.getElementsByName("gender");
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                gender = radios[i].value;
+                break;
+            }
+        }
+
+        var isValid = true;
+
+        if (name === "") {
+            document.getElementById("nameError").innerText = "Name is required";
+            isValid = false;
+        }
+
+        if (email === "") {
+            document.getElementById("emailError").innerText = "Email is required";
+            isValid = false;
+        } else if (email.indexOf("@") === -1 || email.indexOf(".") === -1) {
+            document.getElementById("emailError").innerText = "Valid email required (@ and .)";
+            isValid = false;
+        }
+
+        if (dob === "") {
+            document.getElementById("dobError").innerText = "Date of Birth is required";
+            isValid = false;
+        }
+
+        if (gender === "") {
+            document.getElementById("genderError").innerText = "Please select gender";
+            isValid = false;
+        }
+
+        if (year === "") {
+            document.getElementById("yearError").innerText = "Please select year";
+            isValid = false;
+        }
+
+        if (sem === "") {
+            document.getElementById("semError").innerText = "Please select semester";
+            isValid = false;
+        }
+
+        if (sec === "") {
+            document.getElementById("secError").innerText = "Section is required";
+            isValid = false;
+        }
+
+        if (batch === "") {
+            document.getElementById("batchError").innerText = "Batch is required";
+            isValid = false;
+        }
+
+        if (!terms) {
+            document.getElementById("termsError").innerText = "You must agree to the terms";
+            isValid = false;
+        }
+
+        // Show success notification if all checks pass
+        if (isValid) {
+            var msg = document.getElementById("successMessage");
+            msg.style.display = "block";
+            msg.innerText = "Form submitted successfully!";
+        }
+
+        return false;
+    }
+</script>
+
+</body>
+</html>
